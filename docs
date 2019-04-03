@@ -1,15 +1,25 @@
 #!/bin/bash
 
+function p_usage() {
+	echo "Usage: $0 (edit|list|print) [<FILE>...]"
+	echo ""
+	echo "The first line of each document is used in the description in 'list'."
+	echo "Don't start a document name with a dot."
+}
+
 DOCS_DIR=.
 
 while [ ! -d "$DOCS_DIR/.docs" ]; do
 	if [ "$(realpath $DOCS_DIR)" = '/' ]; then
-		echo "Error: .docs/ not found"
+		echo -e "Error: '.docs/' not found\n"
+		p_usage
 		exit 1
 	fi
 
 	DOCS_DIR="$DOCS_DIR/.."
 done
+
+DOCS_DIR="$DOCS_DIR/.docs"
 
 i=0
 for f in "${@:2}"; do
@@ -18,12 +28,24 @@ for f in "${@:2}"; do
 done
 
 if [ "$1" == "edit" ] || [ "$1" == "e" ]; then
+	if [ -z ${EDITOR+x} ]; then
+		EDITOR=vi
+	fi
+
 	exec "$EDITOR" "$FILES"
 elif [ "$1" == "list" ] || [ "$1" == "l" ]; then
-	exec ls "$DOCS_DIR"
+	FILES="$(ls $DOCS_DIR)"
+	printf "%-15s%s\n" "FILE" "DESCRIPTION"
+	printf "%-15s%s\n" '-----' '------------'
+	for file in $FILES; do
+		printf "%-15s%s\n" "$file" "$(head -n 1 $DOCS_DIR/$file)"
+	done
 elif [ "$1" == "print" ] || [ "$1" == "p" ]; then
-	exec cat "$FILES"
+	for file in $FILES; do
+		echo -e "=== $file ===\n"
+		cat "$DOCS_DIR/$file"
+	done
 else
-	echo "Usage: $0 [edit|list|print] [<ARGS>]"
+	p_usage
 	exit 1
 fi

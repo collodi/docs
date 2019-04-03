@@ -1,0 +1,29 @@
+#!/bin/bash
+
+DOCS_DIR=.
+
+while [ ! -d "$DOCS_DIR/.docs" ]; do
+	if [ "$(realpath $DOCS_DIR)" = '/' ]; then
+		echo "Error: .docs/ not found"
+		exit 1
+	fi
+
+	DOCS_DIR="$DOCS_DIR/.."
+done
+
+i=0
+for f in "${@:2}"; do
+	FILES[$i]="$DOCS_DIR/$f"
+	let i++
+done
+
+if [ "$1" == "edit" ] || [ "$1" == "e" ]; then
+	exec "$EDITOR" "$FILES"
+elif [ "$1" == "list" ] || [ "$1" == "l" ]; then
+	exec ls "$DOCS_DIR"
+elif [ "$1" == "print" ] || [ "$1" == "p" ]; then
+	exec cat "$FILES"
+else
+	echo "Usage: $0 [edit|list|print] [<ARGS>]"
+	exit 1
+fi

@@ -8,6 +8,7 @@ A document corresponds to a file in this directory.
 Usage
 ---
 
+- `docs init` - create `.docs/` in current directory
 - `docs list` - list all documents  
 - `docs edit <FILE>...` -  edit documents  
 - `docs print <FILE>...` -  print documents  

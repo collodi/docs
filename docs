@@ -1,10 +1,11 @@
 #!/bin/bash
 
 function p_usage() {
-	echo "Usage: $0 (edit|list|print) [<FILE>...]"
+	echo "Usage: $0 (init|edit|list|print) [<FILE>...]"
 	echo ""
 	echo "The first line of each document is used in the description in 'list'."
 	echo "Don't start a document name with a dot."
+	echo "The first letter is an alias to each command."
 }
 
 DOCS_DIR=.
@@ -27,7 +28,10 @@ for f in "${@:2}"; do
 	let i++
 done
 
-if [ "$1" == "edit" ] || [ "$1" == "e" ]; then
+if [ "$1" == "init" ] || [ "$1" == "i" ]; then
+	mkdir -p "./docs"
+	echo "Created $PWD/.docs/"
+elif [ "$1" == "edit" ] || [ "$1" == "e" ]; then
 	if [ -z ${EDITOR+x} ]; then
 		EDITOR=vi
 	fi
